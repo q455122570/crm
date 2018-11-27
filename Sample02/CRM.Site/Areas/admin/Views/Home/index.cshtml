@@ -1,0 +1,111 @@
+﻿@{
+    Layout = null;
+}
+@using CRM.WebHelper;
+@using CRM.Model;
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>index</title>
+    <script>
+        var tab;
+        $(function () {
+            $("#layout1").ligerLayout({ leftWidth: 250 });
+            //左边菜单
+            $("#leftMenus").ligerAccordion({ height: 500 });
+            //tab栏
+            tab=$("#tab1").ligerTab({height:"100%"});
+        })
+        //打开一个新的tab，如果有，则根据tabid选中
+        function addTab(tabid, url, title)
+        {
+          
+            tab.addTabItem({
+                tabid:tabid,//tab唯一标识
+                url: url,
+                text:title//菜单标题
+                });
+        }
+    </script>
+</head>
+<body>
+    <div>
+        <div id="layout1">
+          @*顶部*@
+          <div position="top" class="top1">
+                <a href="#" class="title">CRM客户关系管理</a>
+                <ul>
+                    <li>
+                        <img alt="" src="/images/avatar.gif" style="height: 29px;">
+                    </li>
+                    <li>欢迎 【@UserMgr.GetCurrentUserinfo().uRealName】 登录</li>
+                    <li><a href="/admin/Login/Logout">退出</a></li>
+                </ul>
+            </div>
+          @*左边菜单栏*@ 
+          <div position="left">
+            <!--菜单-->
+                <div id="leftMenus">
+                    @*动态生成菜单数据*@
+                    @*@helper CreateLi(List<sysMenus> li)
+                        {
+    
+                        }*@
+                    @{
+                        //获取菜单数据 集合
+                        var list= ViewBag.mlist as List<sysMenus>;
+                        //遍历集合
+                        if (list != null&&list.Any())
+                        {
+                            //遍历一级菜单
+                            foreach (var menu in list)
+                            {
+                                if (menu.mParentID ==-1)
+                                {
+                                    <div title="@menu.mName">
+                                        <!--二级菜单-->
+                                        <ul>
+                                            @foreach (var item in list)
+                                            {
+                                                //拿到子菜单
+                                                if (item.mParentID == menu.mID)
+                                                {
+
+                                                    <li><a href="javascript:voud(0)" onclick="addTab(@item.mID,'@item.mUrl','@item.mName')"><i class="@item.mPicname"></i>@item.mName</a></li>
+                                                }
+
+                                            }
+                                        </ul>
+                                    </div>
+                                } 
+                            }
+                        }
+                    }
+                    @*<div title="功能列表" >
+                        <ul>
+                            <li><a href="/admin/keyval/index"><i class="icon-adjust"></i>数据字典管理</a></li>
+                        </ul>
+                    </div>*@
+                      
+                    <div title="其他" style="padding:10px">
+                        其他内容
+                    </div>
+                </div>
+</div>
+            @*中心主框体*@
+        <div position="center" title="标题" id="tab1">
+                <div title="工作台">
+                   <iframe>
+                    
+                   </iframe>
+                </div>
+            </div>
+          
+           
+        </div>
+
+    </div>
+</body>
+</html>

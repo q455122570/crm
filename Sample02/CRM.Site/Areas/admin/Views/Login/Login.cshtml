@@ -1,0 +1,152 @@
+﻿@model CRM.Model.ModelViews.LoginInfo
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Login</title>
+    <link href="~/Content/Site.css" rel="stylesheet" />
+    <link href="~/Content/admin/bootstrap/css/bootstrap.css" rel="stylesheet" />
+    <link href="~/Content/admin/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+    <link href="~/Content/admin/ligerUI/skins/Aqua/css/ligerui-all.css" rel="stylesheet" />
+    <script src="~/Scripts/jquery-1.8.2.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.min.js"></script>
+    <script src="~/Scripts/jquery.unobtrusive-ajax.js"></script>
+  
+    <script src="~/Scripts/jquery.validate.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.js"></script>
+    <script src="~/Content/admin/ligerUI/js/ligerui.all.js"></script>
+    @*<script type="text/javascript">
+    function begin() {
+        //正在请求
+    }
+    function success(ajaxobj) {
+        //关闭正在请求提示
+        if (ajaxobj.status == "1") {
+            //alter(ajaxobj.msg);
+            $.ligerDialog.warn(ajaxobj.msg);
+
+        }
+        else {
+            //alter(ajaxobj.msg);
+            window.location = '@Url.Action("Index", "Home")';
+        }
+    }
+    </script>*@
+
+</head>
+
+<body>
+    <div id="login">
+        @using (Ajax.BeginForm("Login", "Login", new AjaxOptions()
+        {
+            Url = Url.Action("Login", "Login"),
+            HttpMethod = "Post",
+            OnBegin = "begin",
+            OnSuccess = "success"
+        }, new { id="f1"}))
+        {
+            <table class="list">
+                <tr>
+                    <th>@Html.DisplayNameFor(c => c.uLoginName)</th> 
+                    <td>@Html.TextBoxFor(c => c.uLoginName)
+                    @Html.ValidationMessageFor(c => c.uLoginName)
+                    </td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(c => c.uLoginPwd)</th>
+                    <td>
+                        @Html.TextBoxFor(c => c.uLoginPwd)
+                    @Html.ValidationMessageFor(c => c.uLoginPwd)
+                    </td>
+                </tr>
+                <tr>
+                    <th>@Html.DisplayNameFor(c => c.Vcode)</th>
+                    <td>
+                        <img src="@Url.Action("Vcode", "Vcode")" id="imgcode" onclick="resetVcode()" height="26" width="65" style="cursor:pointer;" />
+                        @Html.TextBoxFor(c => c.Vcode, new { style = "width:60px;" })
+                    @Html.ValidationMessageFor(c => c.Vcode)
+                    </td>
+                </tr>
+                <tr>
+                    <th></th>
+                        <td>@Html.CheckBoxFor(c => c.IsMember)</td>
+                </tr>
+             </table>
+        }
+    </div>
+ 
+
+
+<style type="text/css">
+        .list {
+            border-collapse: collapse;
+            width: 400px;
+            margin: 0 auto;
+        }
+
+            .list th {
+                padding: 5px;
+                text-align: right;
+                font-size: 16px;
+                font-weight: bold;
+            }
+
+            .list td {
+                padding: 5px;
+            }
+</style>
+<script type="text/javascript">
+
+    $(function () {
+        //登录div中元素利用ligerUI显示出来
+        $.ligerDialog.open({
+            title:"欢迎登录CRM系统",
+            target: $("#login"),
+            width: 450,
+            buttons: [
+                {
+                    text: '确定', onclick: function (item, dialog) {
+                        //实现表单的提交
+                        $("#f1").submit();
+                    }, cls: 'l-dialog-btn-highlight'
+                },
+                { text: '重置', onclick: function (item, dialog) { document.getElementById("f1").reset();} }
+            ]
+        });
+    })
+    function resetVcode() {
+        var url = '@Url.Action("Vcode","Vcode")'+"?rid="+Math.random();
+        $("#imgcode").attr("src",url);
+    }
+
+</script>
+<script type="text/javascript">
+    function begin() {
+        //提示正在请求中....
+    }
+
+    function success(ajaxobj) {
+        //ajaxobj格式:{status=0/1/2,msg="登录成功/异常信息"  }
+        //判断处理状态如果为1则表示有错误
+        if (ajaxobj.status == "1") {
+            //alert(ajaxobj.msg);
+            //利用ligerUI的警告提示框进行提示操作
+            $.ligerDialog.warn(ajaxobj.msg);
+        } else {
+            //跳转到首页
+            window.location = '@Url.Action("Index", "Home")';
+        }
+        //关闭正在请求中....的提示
+    }
+
+</script>
+
+
+</body>
+</html>
